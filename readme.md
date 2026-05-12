@@ -32,3 +32,4 @@ npm run build
 docker build -t xpartla/pharmacy-ufe:local -f build/docker/Dockerfile .
 docker run --rm -p 8080:8080 xpartla/pharmacy-ufe:local
 ```
+
