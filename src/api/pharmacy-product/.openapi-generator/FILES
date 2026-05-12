@@ -1,0 +1,11 @@
+.openapi-generator-ignore
+apis/PharmaciesApi.ts
+apis/PharmacyCategoriesApi.ts
+apis/PharmacyProductsApi.ts
+apis/index.ts
+index.ts
+models/Category.ts
+models/Pharmacy.ts
+models/Product.ts
+models/index.ts
+runtime.ts

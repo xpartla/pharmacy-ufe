@@ -1,0 +1,34 @@
+:host {
+  display: block;
+  padding: 1rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+form md-filled-text-field,
+form md-filled-select {
+  width: 100%;
+}
+
+md-divider {
+  margin: 1.5rem 0 1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.stretch-fill {
+  flex: 1;
+}
+
+.error {
+  padding: 1rem;
+  color: var(--md-sys-color-error, #b00020);
+}

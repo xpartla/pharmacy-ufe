@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="sk">
+  <head>
+    <base href="/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <title>Sklad lekárne xpartla</title>
+
+    <script type="module" src="/build/pharmacy-ufe.esm.js"></script>
+    <script nomodule src="/build/pharmacy-ufe.js"></script>
+  </head>
+  <body style="font-family: 'Roboto';">
+    <xpartla-pharmacy-product-app
+      pharmacy-id="lekaren-centrum"
+      api-base="http://localhost:5001/api"
+      base-path="/pharmacy-product/"
+    ></xpartla-pharmacy-product-app>
+  </body>
+</html>

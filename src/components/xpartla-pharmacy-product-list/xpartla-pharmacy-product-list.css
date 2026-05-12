@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  padding: 1rem;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filters md-filled-text-field,
+.filters md-filled-select {
+  flex: 1 1 240px;
+}
+
+.add-button {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+}
+
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--md-sys-color-on-surface-variant, #555);
+}
+
+.error {
+  padding: 1rem;
+  color: var(--md-sys-color-error, #b00020);
+}
