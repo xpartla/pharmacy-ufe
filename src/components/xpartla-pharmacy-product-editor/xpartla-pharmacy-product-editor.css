@@ -1,7 +1,76 @@
 :host {
   display: block;
-  padding: 1rem;
+  padding: clamp(1rem, 2.5vw, 2rem) clamp(1rem, 3vw, 2.5rem) 4rem;
+  max-width: 820px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
+
+/* === Header ================================================================== */
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.back {
+  flex-shrink: 0;
+}
+
+.header-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--md-sys-color-primary);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-chip.active {
+  --md-suggestion-chip-label-text-color: var(--xpartla-status-ok);
+}
+
+.status-chip.inactive {
+  --md-suggestion-chip-label-text-color: var(--xpartla-status-inactive);
+}
+
+/* === Banner ================================================================== */
+
+.banner {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.banner-error {
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+
+/* === Section cards =========================================================== */
 
 form {
   display: flex;
@@ -9,10 +78,111 @@ form {
   gap: 1rem;
 }
 
-form md-filled-text-field,
-form md-filled-select {
+.card {
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 18px;
+  padding: 1.25rem;
+}
+
+.card h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.card h2 md-icon {
+  color: var(--md-sys-color-primary);
+}
+
+.row {
+  display: flex;
+  gap: 0.875rem;
+  margin-bottom: 0.875rem;
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+.grow {
+  flex: 1;
+}
+
+.row md-outlined-text-field,
+.row md-outlined-select {
   width: 100%;
 }
+
+/* === Stock stepper =========================================================== */
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stock-input {
+  flex: 1;
+  max-width: 220px;
+}
+
+.stock-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.stock-hint md-icon {
+  font-size: 18px;
+  --md-icon-size: 18px;
+}
+
+.stock-hint-ok {
+  background: var(--xpartla-status-ok-container);
+  color: var(--xpartla-status-ok);
+}
+.stock-hint-low {
+  background: var(--xpartla-status-low-container);
+  color: var(--xpartla-status-low);
+}
+.stock-hint-out {
+  background: var(--xpartla-status-out-container);
+  color: var(--xpartla-status-out);
+}
+
+/* === Toggle row ============================================================== */
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.toggle-label {
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+}
+
+.toggle-help {
+  font-size: 0.825rem;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: 0.25rem;
+}
+
+/* === Actions ================================================================= */
 
 md-divider {
   margin: 1.5rem 0 1rem;
@@ -20,6 +190,7 @@ md-divider {
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
 }
@@ -28,7 +199,39 @@ md-divider {
   flex: 1;
 }
 
-.error {
-  padding: 1rem;
-  color: var(--md-sys-color-error, #b00020);
+.danger {
+  --md-filled-tonal-button-container-color: var(--xpartla-status-out-container);
+  --md-filled-tonal-button-label-text-color: var(--xpartla-status-out);
+}
+
+/* === States ================================================================== */
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.state-loading {
+  background: var(--md-sys-color-surface-container-low);
+  border: 1px dashed var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.state-error {
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+
+.state-error md-icon {
+  font-size: 48px;
+  --md-icon-size: 48px;
+}
+
+.state p {
+  margin: 0;
 }

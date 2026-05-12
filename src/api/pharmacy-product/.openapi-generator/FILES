@@ -1,4 +1,3 @@
-.openapi-generator-ignore
 apis/PharmaciesApi.ts
 apis/PharmacyCategoriesApi.ts
 apis/PharmacyProductsApi.ts

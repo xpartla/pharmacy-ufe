@@ -39,6 +39,7 @@ export interface GetProductRequest {
 
 export interface GetProductsRequest {
     pharmacyId: string;
+    include?: GetProductsIncludeEnum;
 }
 
 export interface UpdateProductRequest {
@@ -106,9 +107,10 @@ export interface PharmacyProductsApiInterface {
     getProduct(requestParameters: GetProductRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Product>;
 
     /**
-     * Returns the list of products of the pharmacy. Only active products are returned; soft-deleted (active=false) products are hidden.
+     * Returns the list of products of the pharmacy. By default only active products are returned; pass `include=inactive` to get the soft-deleted ones, or `include=all` to get every product regardless of status.
      * @summary Provides the pharmacy product list
      * @param {string} pharmacyId pass the id of the particular pharmacy
+     * @param {'active' | 'inactive' | 'all'} [include] which products to return based on the active flag
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PharmacyProductsApiInterface
@@ -116,7 +118,7 @@ export interface PharmacyProductsApiInterface {
     getProductsRaw(requestParameters: GetProductsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Product>>>;
 
     /**
-     * Returns the list of products of the pharmacy. Only active products are returned; soft-deleted (active=false) products are hidden.
+     * Returns the list of products of the pharmacy. By default only active products are returned; pass `include=inactive` to get the soft-deleted ones, or `include=all` to get every product regardless of status.
      * Provides the pharmacy product list
      */
     getProducts(requestParameters: GetProductsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Product>>;
@@ -257,7 +259,7 @@ export class PharmacyProductsApi extends runtime.BaseAPI implements PharmacyProd
     }
 
     /**
-     * Returns the list of products of the pharmacy. Only active products are returned; soft-deleted (active=false) products are hidden.
+     * Returns the list of products of the pharmacy. By default only active products are returned; pass `include=inactive` to get the soft-deleted ones, or `include=all` to get every product regardless of status.
      * Provides the pharmacy product list
      */
     async getProductsRaw(requestParameters: GetProductsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Product>>> {
@@ -266,6 +268,10 @@ export class PharmacyProductsApi extends runtime.BaseAPI implements PharmacyProd
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters.include !== undefined) {
+            queryParameters['include'] = requestParameters.include;
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -280,7 +286,7 @@ export class PharmacyProductsApi extends runtime.BaseAPI implements PharmacyProd
     }
 
     /**
-     * Returns the list of products of the pharmacy. Only active products are returned; soft-deleted (active=false) products are hidden.
+     * Returns the list of products of the pharmacy. By default only active products are returned; pass `include=inactive` to get the soft-deleted ones, or `include=all` to get every product regardless of status.
      * Provides the pharmacy product list
      */
     async getProducts(requestParameters: GetProductsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Product>> {
@@ -332,3 +338,13 @@ export class PharmacyProductsApi extends runtime.BaseAPI implements PharmacyProd
     }
 
 }
+
+/**
+ * @export
+ */
+export const GetProductsIncludeEnum = {
+    Active: 'active',
+    Inactive: 'inactive',
+    All: 'all'
+} as const;
+export type GetProductsIncludeEnum = typeof GetProductsIncludeEnum[keyof typeof GetProductsIncludeEnum];

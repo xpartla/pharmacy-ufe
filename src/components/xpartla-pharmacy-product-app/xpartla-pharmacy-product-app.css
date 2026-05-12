@@ -1,1 +1,51 @@
-:host { display: block; }
+:host {
+  display: block;
+  min-height: 100%;
+  font-family: 'Roboto', 'Inter', system-ui, sans-serif;
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface);
+
+  /* Material 3 "pharmacy" palette — clinical green primary, warm amber secondary,
+     muted blue-grey tertiary, semantic error/warning, soft surface. Tokens cascade
+     into every Material Web component used by the child components. */
+  --md-sys-color-primary: #1f6f43;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #b6f0c6;
+  --md-sys-color-on-primary-container: #002111;
+
+  --md-sys-color-secondary: #4f6354;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #d2e8d4;
+  --md-sys-color-on-secondary-container: #0d1f13;
+
+  --md-sys-color-tertiary: #386570;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #bcebf8;
+  --md-sys-color-on-tertiary-container: #001f26;
+
+  --md-sys-color-surface: #f6fbf4;
+  --md-sys-color-on-surface: #181d18;
+  --md-sys-color-surface-variant: #dde5da;
+  --md-sys-color-on-surface-variant: #414941;
+  --md-sys-color-surface-container: #eaf1e7;
+  --md-sys-color-surface-container-low: #f1f7ee;
+  --md-sys-color-surface-container-high: #e3eae0;
+  --md-sys-color-surface-container-highest: #dde4da;
+  --md-sys-color-outline: #717971;
+  --md-sys-color-outline-variant: #c1c9bf;
+
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+
+  /* Custom semantic tokens used by the redesigned components. */
+  --xpartla-status-ok: #1f6f43;
+  --xpartla-status-ok-container: #b6f0c6;
+  --xpartla-status-low: #8a5300;
+  --xpartla-status-low-container: #ffddb6;
+  --xpartla-status-out: #ba1a1a;
+  --xpartla-status-out-container: #ffdad6;
+  --xpartla-status-inactive: #586060;
+  --xpartla-status-inactive-container: #d6e3e2;
+}
