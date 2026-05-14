@@ -13,6 +13,7 @@ declare global {
 })
 export class XpartlaPharmacyProductApp {
   @State() private relativePath = '';
+  @State() userRole: 'sestra' | 'lekaren' = 'sestra';
 
   @Prop() basePath: string = '';
   @Prop() apiBase: string;
@@ -41,12 +42,19 @@ export class XpartlaPharmacyProductApp {
   }
 
   render() {
+    let section: 'products' | 'orders' = 'products';
     let element = 'list';
-    let productId = '@new';
+    let entityId = '@new';
 
-    if (this.relativePath.startsWith('product/')) {
+    if (this.relativePath.startsWith('orders/')) {
+      section = 'orders';
+      if (this.relativePath.startsWith('orders/order/')) {
+        element = 'editor';
+        entityId = this.relativePath.split('/')[2];
+      }
+    } else if (this.relativePath.startsWith('product/')) {
       element = 'editor';
-      productId = this.relativePath.split('/')[1];
+      entityId = this.relativePath.split('/')[1];
     }
 
     const navigate = (path: string) => {
@@ -56,19 +64,69 @@ export class XpartlaPharmacyProductApp {
 
     return (
       <Host>
-        {element === 'editor' ? (
+        <nav class="scenario-nav">
+          <div class="nav-buttons">
+            <md-text-button
+              class={{ active: section === 'products' }}
+              onclick={() => navigate('./list')}
+            >
+              Produkty lekárne
+            </md-text-button>
+            <md-text-button
+              class={{ active: section === 'orders' }}
+              onclick={() => navigate('./orders/list')}
+            >
+              Objednávky oddelení
+            </md-text-button>
+          </div>
+          {section === 'orders' && (
+            <div class="role-selector">
+              <label>Rola:</label>
+              <md-outlined-select
+                value={this.userRole}
+                oninput={(ev: InputEvent) =>
+                  (this.userRole = (ev.target as HTMLInputElement).value as 'sestra' | 'lekaren')
+                }
+              >
+                <md-select-option value="sestra" selected={this.userRole === 'sestra'}>
+                  <div slot="headline">👩‍⚕️ Sestra</div>
+                </md-select-option>
+                <md-select-option value="lekaren" selected={this.userRole === 'lekaren'}>
+                  <div slot="headline">👨‍⚕️ Pracovník lekárne</div>
+                </md-select-option>
+              </md-outlined-select>
+            </div>
+          )}
+        </nav>
+
+        {section === 'products' && element === 'editor' ? (
           <xpartla-pharmacy-product-editor
-            product-id={productId}
+            product-id={entityId}
             pharmacy-id={this.pharmacyId}
             api-base={this.apiBase}
             oneditor-closed={() => navigate('./list')}
           ></xpartla-pharmacy-product-editor>
-        ) : (
+        ) : section === 'products' ? (
           <xpartla-pharmacy-product-list
             pharmacy-id={this.pharmacyId}
             api-base={this.apiBase}
             onentry-clicked={(ev: CustomEvent<string>) => navigate('./product/' + ev.detail)}
           ></xpartla-pharmacy-product-list>
+        ) : element === 'editor' ? (
+          <xpartla-pharmacy-order-editor
+            order-id={entityId}
+            pharmacy-id={this.pharmacyId}
+            api-base={this.apiBase}
+            user-role={this.userRole}
+            onorder-editor-closed={() => navigate('./orders/list')}
+          ></xpartla-pharmacy-order-editor>
+        ) : (
+          <xpartla-pharmacy-order-list
+            pharmacy-id={this.pharmacyId}
+            api-base={this.apiBase}
+            user-role={this.userRole}
+            onorder-clicked={(ev: CustomEvent<string>) => navigate('./orders/order/' + ev.detail)}
+          ></xpartla-pharmacy-order-list>
         )}
       </Host>
     );

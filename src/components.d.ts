@@ -6,6 +6,17 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
+    interface XpartlaPharmacyOrderEditor {
+        "apiBase": string;
+        "orderId": string;
+        "pharmacyId": string;
+        "userRole"?: 'sestra' | 'lekaren';
+    }
+    interface XpartlaPharmacyOrderList {
+        "apiBase": string;
+        "pharmacyId": string;
+        "userRole"?: 'sestra' | 'lekaren';
+    }
     interface XpartlaPharmacyProductApp {
         "apiBase": string;
         /**
@@ -24,6 +35,14 @@ export namespace Components {
         "pharmacyId": string;
     }
 }
+export interface XpartlaPharmacyOrderEditorCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLXpartlaPharmacyOrderEditorElement;
+}
+export interface XpartlaPharmacyOrderListCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLXpartlaPharmacyOrderListElement;
+}
 export interface XpartlaPharmacyProductEditorCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLXpartlaPharmacyProductEditorElement;
@@ -33,6 +52,40 @@ export interface XpartlaPharmacyProductListCustomEvent<T> extends CustomEvent<T>
     target: HTMLXpartlaPharmacyProductListElement;
 }
 declare global {
+    interface HTMLXpartlaPharmacyOrderEditorElementEventMap {
+        "order-editor-closed": string;
+    }
+    interface HTMLXpartlaPharmacyOrderEditorElement extends Components.XpartlaPharmacyOrderEditor, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLXpartlaPharmacyOrderEditorElementEventMap>(type: K, listener: (this: HTMLXpartlaPharmacyOrderEditorElement, ev: XpartlaPharmacyOrderEditorCustomEvent<HTMLXpartlaPharmacyOrderEditorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLXpartlaPharmacyOrderEditorElementEventMap>(type: K, listener: (this: HTMLXpartlaPharmacyOrderEditorElement, ev: XpartlaPharmacyOrderEditorCustomEvent<HTMLXpartlaPharmacyOrderEditorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLXpartlaPharmacyOrderEditorElement: {
+        prototype: HTMLXpartlaPharmacyOrderEditorElement;
+        new (): HTMLXpartlaPharmacyOrderEditorElement;
+    };
+    interface HTMLXpartlaPharmacyOrderListElementEventMap {
+        "order-clicked": string;
+    }
+    interface HTMLXpartlaPharmacyOrderListElement extends Components.XpartlaPharmacyOrderList, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLXpartlaPharmacyOrderListElementEventMap>(type: K, listener: (this: HTMLXpartlaPharmacyOrderListElement, ev: XpartlaPharmacyOrderListCustomEvent<HTMLXpartlaPharmacyOrderListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLXpartlaPharmacyOrderListElementEventMap>(type: K, listener: (this: HTMLXpartlaPharmacyOrderListElement, ev: XpartlaPharmacyOrderListCustomEvent<HTMLXpartlaPharmacyOrderListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLXpartlaPharmacyOrderListElement: {
+        prototype: HTMLXpartlaPharmacyOrderListElement;
+        new (): HTMLXpartlaPharmacyOrderListElement;
+    };
     interface HTMLXpartlaPharmacyProductAppElement extends Components.XpartlaPharmacyProductApp, HTMLStencilElement {
     }
     var HTMLXpartlaPharmacyProductAppElement: {
@@ -74,12 +127,27 @@ declare global {
         new (): HTMLXpartlaPharmacyProductListElement;
     };
     interface HTMLElementTagNameMap {
+        "xpartla-pharmacy-order-editor": HTMLXpartlaPharmacyOrderEditorElement;
+        "xpartla-pharmacy-order-list": HTMLXpartlaPharmacyOrderListElement;
         "xpartla-pharmacy-product-app": HTMLXpartlaPharmacyProductAppElement;
         "xpartla-pharmacy-product-editor": HTMLXpartlaPharmacyProductEditorElement;
         "xpartla-pharmacy-product-list": HTMLXpartlaPharmacyProductListElement;
     }
 }
 declare namespace LocalJSX {
+    interface XpartlaPharmacyOrderEditor {
+        "apiBase"?: string;
+        "onOrder-editor-closed"?: (event: XpartlaPharmacyOrderEditorCustomEvent<string>) => void;
+        "orderId"?: string;
+        "pharmacyId"?: string;
+        "userRole"?: 'sestra' | 'lekaren';
+    }
+    interface XpartlaPharmacyOrderList {
+        "apiBase"?: string;
+        "onOrder-clicked"?: (event: XpartlaPharmacyOrderListCustomEvent<string>) => void;
+        "pharmacyId"?: string;
+        "userRole"?: 'sestra' | 'lekaren';
+    }
     interface XpartlaPharmacyProductApp {
         "apiBase"?: string;
         /**
@@ -100,6 +168,17 @@ declare namespace LocalJSX {
         "pharmacyId"?: string;
     }
 
+    interface XpartlaPharmacyOrderEditorAttributes {
+        "orderId": string;
+        "pharmacyId": string;
+        "apiBase": string;
+        "userRole": 'sestra' | 'lekaren';
+    }
+    interface XpartlaPharmacyOrderListAttributes {
+        "apiBase": string;
+        "pharmacyId": string;
+        "userRole": 'sestra' | 'lekaren';
+    }
     interface XpartlaPharmacyProductAppAttributes {
         "basePath": string;
         "apiBase": string;
@@ -116,6 +195,8 @@ declare namespace LocalJSX {
     }
 
     interface IntrinsicElements {
+        "xpartla-pharmacy-order-editor": Omit<XpartlaPharmacyOrderEditor, keyof XpartlaPharmacyOrderEditorAttributes> & { [K in keyof XpartlaPharmacyOrderEditor & keyof XpartlaPharmacyOrderEditorAttributes]?: XpartlaPharmacyOrderEditor[K] } & { [K in keyof XpartlaPharmacyOrderEditor & keyof XpartlaPharmacyOrderEditorAttributes as `attr:${K}`]?: XpartlaPharmacyOrderEditorAttributes[K] } & { [K in keyof XpartlaPharmacyOrderEditor & keyof XpartlaPharmacyOrderEditorAttributes as `prop:${K}`]?: XpartlaPharmacyOrderEditor[K] };
+        "xpartla-pharmacy-order-list": Omit<XpartlaPharmacyOrderList, keyof XpartlaPharmacyOrderListAttributes> & { [K in keyof XpartlaPharmacyOrderList & keyof XpartlaPharmacyOrderListAttributes]?: XpartlaPharmacyOrderList[K] } & { [K in keyof XpartlaPharmacyOrderList & keyof XpartlaPharmacyOrderListAttributes as `attr:${K}`]?: XpartlaPharmacyOrderListAttributes[K] } & { [K in keyof XpartlaPharmacyOrderList & keyof XpartlaPharmacyOrderListAttributes as `prop:${K}`]?: XpartlaPharmacyOrderList[K] };
         "xpartla-pharmacy-product-app": Omit<XpartlaPharmacyProductApp, keyof XpartlaPharmacyProductAppAttributes> & { [K in keyof XpartlaPharmacyProductApp & keyof XpartlaPharmacyProductAppAttributes]?: XpartlaPharmacyProductApp[K] } & { [K in keyof XpartlaPharmacyProductApp & keyof XpartlaPharmacyProductAppAttributes as `attr:${K}`]?: XpartlaPharmacyProductAppAttributes[K] } & { [K in keyof XpartlaPharmacyProductApp & keyof XpartlaPharmacyProductAppAttributes as `prop:${K}`]?: XpartlaPharmacyProductApp[K] };
         "xpartla-pharmacy-product-editor": Omit<XpartlaPharmacyProductEditor, keyof XpartlaPharmacyProductEditorAttributes> & { [K in keyof XpartlaPharmacyProductEditor & keyof XpartlaPharmacyProductEditorAttributes]?: XpartlaPharmacyProductEditor[K] } & { [K in keyof XpartlaPharmacyProductEditor & keyof XpartlaPharmacyProductEditorAttributes as `attr:${K}`]?: XpartlaPharmacyProductEditorAttributes[K] } & { [K in keyof XpartlaPharmacyProductEditor & keyof XpartlaPharmacyProductEditorAttributes as `prop:${K}`]?: XpartlaPharmacyProductEditor[K] };
         "xpartla-pharmacy-product-list": Omit<XpartlaPharmacyProductList, keyof XpartlaPharmacyProductListAttributes> & { [K in keyof XpartlaPharmacyProductList & keyof XpartlaPharmacyProductListAttributes]?: XpartlaPharmacyProductList[K] } & { [K in keyof XpartlaPharmacyProductList & keyof XpartlaPharmacyProductListAttributes as `attr:${K}`]?: XpartlaPharmacyProductListAttributes[K] } & { [K in keyof XpartlaPharmacyProductList & keyof XpartlaPharmacyProductListAttributes as `prop:${K}`]?: XpartlaPharmacyProductList[K] };
@@ -125,6 +206,8 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "xpartla-pharmacy-order-editor": LocalJSX.IntrinsicElements["xpartla-pharmacy-order-editor"] & JSXBase.HTMLAttributes<HTMLXpartlaPharmacyOrderEditorElement>;
+            "xpartla-pharmacy-order-list": LocalJSX.IntrinsicElements["xpartla-pharmacy-order-list"] & JSXBase.HTMLAttributes<HTMLXpartlaPharmacyOrderListElement>;
             "xpartla-pharmacy-product-app": LocalJSX.IntrinsicElements["xpartla-pharmacy-product-app"] & JSXBase.HTMLAttributes<HTMLXpartlaPharmacyProductAppElement>;
             "xpartla-pharmacy-product-editor": LocalJSX.IntrinsicElements["xpartla-pharmacy-product-editor"] & JSXBase.HTMLAttributes<HTMLXpartlaPharmacyProductEditorElement>;
             "xpartla-pharmacy-product-list": LocalJSX.IntrinsicElements["xpartla-pharmacy-product-list"] & JSXBase.HTMLAttributes<HTMLXpartlaPharmacyProductListElement>;

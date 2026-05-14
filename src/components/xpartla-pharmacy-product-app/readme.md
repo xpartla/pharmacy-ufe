@@ -20,12 +20,16 @@
 
 - [xpartla-pharmacy-product-editor](../xpartla-pharmacy-product-editor)
 - [xpartla-pharmacy-product-list](../xpartla-pharmacy-product-list)
+- [xpartla-pharmacy-order-editor](../xpartla-pharmacy-order-editor)
+- [xpartla-pharmacy-order-list](../xpartla-pharmacy-order-list)
 
 ### Graph
 ```mermaid
 graph TD;
   xpartla-pharmacy-product-app --> xpartla-pharmacy-product-editor
   xpartla-pharmacy-product-app --> xpartla-pharmacy-product-list
+  xpartla-pharmacy-product-app --> xpartla-pharmacy-order-editor
+  xpartla-pharmacy-product-app --> xpartla-pharmacy-order-list
   style xpartla-pharmacy-product-app fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

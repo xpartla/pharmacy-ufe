@@ -49,3 +49,38 @@
   --xpartla-status-inactive: #586060;
   --xpartla-status-inactive-container: #d6e3e2;
 }
+
+.scenario-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 10px 0 16px;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.scenario-nav md-text-button.active {
+  --md-text-button-label-text-color: var(--md-sys-color-primary);
+  font-weight: 700;
+}
+
+.role-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.role-selector label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.role-selector md-outlined-select {
+  min-width: 200px;
+}
