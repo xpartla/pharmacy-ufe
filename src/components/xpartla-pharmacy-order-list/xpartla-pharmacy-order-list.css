@@ -148,15 +148,20 @@ h3 {
 
 .card-actions {
     display: grid;
-    grid-template-columns: minmax(160px, 1fr) auto;
+    grid-template-columns: 1fr;
     gap: 8px;
     margin-top: 12px;
-    align-items: center;
+    align-items: stretch;
 }
 
-.primary-action,
+.primary-action {
+    width: 100%;
+    min-width: 0;
+}
+
 .detail-action {
     width: 100%;
+    white-space: nowrap;
 }
 
 .action-hint {

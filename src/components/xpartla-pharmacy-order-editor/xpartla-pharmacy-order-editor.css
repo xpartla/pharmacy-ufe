@@ -49,9 +49,25 @@ h2 {
 
 .item-row {
     display: grid;
-    grid-template-columns: 1fr 120px 120px auto;
+    grid-template-columns: 1fr 1fr 1fr auto;
     gap: 8px;
-    align-items: center;
+    align-items: flex-start;
+}
+
+.quantity-control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.quantity-control label {
+    font-size: 0.85rem;
+    color: var(--md-sys-color-on-surface-variant);
+    font-weight: 500;
+}
+
+.quantity-slider {
+    width: 100%;
 }
 
 .actions {

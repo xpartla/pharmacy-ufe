@@ -8,11 +8,6 @@ import {
 
 type StatusFilter = DepartmentOrderStatus | 'all';
 type SortMode = 'newest' | 'oldest' | 'department';
-type RecommendedAction = {
-  label: string;
-  icon: string;
-  nextStatus: DepartmentOrderStatus;
-};
 
 @Component({
   tag: 'xpartla-pharmacy-order-list',
@@ -58,8 +53,22 @@ export class XpartlaPharmacyOrderList {
     return { issued, requested, percent };
   }
 
+  private canMarkAsComplete(order: DepartmentOrder): boolean {
+    const items = order.items || [];
+    if (items.length === 0) return false;
+    return items.every(item => {
+      const requested = Math.max(0, Number(item.requestedQty || 0));
+      const issued = Math.max(0, Number(item.issuedQty || 0));
+      return requested > 0 && issued >= requested;
+    });
+  }
+
   private async quickSetStatus(order: DepartmentOrder, nextStatus: DepartmentOrderStatus) {
     if (!order.id) return;
+    if (nextStatus === 'fulfilled' && !this.canMarkAsComplete(order)) {
+      this.errorMessage = 'Stav Dokončené je možné nastaviť až po vydaní všetkého požadovaného množstva.';
+      return;
+    }
     this.actionBusyId = order.id;
     this.errorMessage = undefined;
     try {
@@ -69,55 +78,34 @@ export class XpartlaPharmacyOrderList {
       });
       this.orders = this.orders.map(existing => (existing.id === updated.id ? updated : existing));
     } catch (err: any) {
-      this.errorMessage = `Rýchla akcia zlyhala: ${err.message || 'neznáma chyba'}`;
+      this.errorMessage = `Zmena stavu zlyhala: ${err.message || 'neznáma chyba'}`;
     } finally {
       this.actionBusyId = undefined;
     }
   }
 
-  private recommendedAction(order: DepartmentOrder): RecommendedAction | undefined {
-    if (this.userRole !== 'lekaren' || !order.id) return undefined;
-    if (order.status === 'created') {
-      return {
-        label: 'Prevziať do spracovania',
-        icon: 'play_arrow',
-        nextStatus: 'processing',
-      };
+  private workflowStatusLabel(status: DepartmentOrderStatus): string {
+    switch (status) {
+      case 'created':
+        return 'Pripravené na spracovanie';
+      case 'processing':
+        return 'Spracováva sa';
+      case 'fulfilled':
+        return 'Dokončené';
+      case 'canceled':
+        return 'Zrušené';
+      case 'archived':
+        return 'Archivované';
+      default:
+        return status;
     }
-    if (order.status === 'processing') {
-      return {
-        label: 'Označiť ako vybavené',
-        icon: 'inventory_2',
-        nextStatus: 'fulfilled',
-      };
-    }
-    if (order.status === 'fulfilled') {
-      return {
-        label: 'Uzavrieť a archivovať',
-        icon: 'task_alt',
-        nextStatus: 'archived',
-      };
-    }
-    return undefined;
   }
 
   private renderCardActions(order: DepartmentOrder) {
     const busy = this.actionBusyId === order.id;
-    const action = this.recommendedAction(order);
+    const canChangeStatus = this.userRole === 'lekaren' && !!order.id;
     return (
       <div class="card-actions" onClick={(ev: Event) => ev.stopPropagation()}>
-        {action ? (
-          <md-filled-button
-            class="primary-action"
-            disabled={busy}
-            onclick={() => this.quickSetStatus(order, action.nextStatus)}
-          >
-            <md-icon slot="icon">{action.icon}</md-icon>
-            {busy ? 'Spracovávam…' : action.label}
-          </md-filled-button>
-        ) : (
-          <div class="action-hint">Žiadna rýchla akcia</div>
-        )}
         <md-outlined-button
           class="detail-action"
           onclick={(ev: Event) => {
@@ -128,6 +116,36 @@ export class XpartlaPharmacyOrderList {
           <md-icon slot="icon">open_in_new</md-icon>
           Detail
         </md-outlined-button>
+        {canChangeStatus ? (
+          <md-outlined-select
+            class="primary-action"
+            label="Zmeniť stav"
+            display-text={busy ? 'Ukladám…' : this.workflowStatusLabel(order.status)}
+            disabled={busy}
+            oninput={(ev: InputEvent) => {
+              const nextStatus = (ev.target as HTMLInputElement).value as DepartmentOrderStatus;
+              if (nextStatus && nextStatus !== order.status) {
+                this.quickSetStatus(order, nextStatus);
+              }
+            }}
+          >
+            <md-select-option value="created" selected={order.status === 'created'}>
+              <div slot="headline">Pripravené na spracovanie</div>
+            </md-select-option>
+            <md-select-option value="processing" selected={order.status === 'processing'}>
+              <div slot="headline">Spracováva sa</div>
+            </md-select-option>
+            <md-select-option
+              value="fulfilled"
+              selected={order.status === 'fulfilled'}
+              disabled={order.status !== 'fulfilled' && !this.canMarkAsComplete(order)}
+            >
+              <div slot="headline">Dokončené</div>
+            </md-select-option>
+          </md-outlined-select>
+        ) : (
+          <div class="action-hint">Stav mení lekáreň</div>
+        )}
       </div>
     );
   }
@@ -155,15 +173,15 @@ export class XpartlaPharmacyOrderList {
   private statusLabel(status: DepartmentOrderStatus): string {
     switch (status) {
       case 'created':
-        return 'Vytvorená';
+        return 'Pripravené na spracovanie';
       case 'processing':
         return 'Spracováva sa';
       case 'fulfilled':
-        return 'Vybavená';
+        return 'Dokončené';
       case 'canceled':
-        return 'Zrušená';
+        return 'Zrušené';
       case 'archived':
-        return 'Archivovaná';
+        return 'Archivované';
       default:
         return status;
     }
@@ -281,31 +299,50 @@ export class XpartlaPharmacyOrderList {
         {!this.loading && this.orders.length > 0 && (
           <>
             <section class="summary-grid">
-              <button class="summary-card" onClick={() => (this.selectedStatus = 'all')}>
-                <span class="summary-label">Všetky</span>
-                <strong>{stats.all}</strong>
-              </button>
-              <button class="summary-card summary-open" onClick={() => (this.onlyOpen = !this.onlyOpen)}>
-                <span class="summary-label">Otvorené</span>
-                <strong>{stats.created + stats.processing}</strong>
-              </button>
-              <button class="summary-card" onClick={() => (this.selectedStatus = 'fulfilled')}>
-                <span class="summary-label">Vybavené</span>
-                <strong>{stats.fulfilled}</strong>
-              </button>
-              <button class="summary-card" onClick={() => (this.selectedStatus = 'archived')}>
-                <span class="summary-label">Archivované</span>
-                <strong>{stats.archived}</strong>
-              </button>
+              <md-filled-card class="summary-card" onclick={() => (this.selectedStatus = 'all')}>
+                <div class="summary-content">
+                  <span class="summary-label">Všetky</span>
+                  <md-badge label={stats.all} style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                    <span class="summary-value">{stats.all}</span>
+                  </md-badge>
+                </div>
+              </md-filled-card>
+
+              <md-filled-card class="summary-card summary-open" onclick={() => (this.onlyOpen = !this.onlyOpen)}>
+                <div class="summary-content">
+                  <span class="summary-label">Otvorené</span>
+                  <md-badge label={stats.created + stats.processing}>
+                    <span class="summary-value">{stats.created + stats.processing}</span>
+                  </md-badge>
+                </div>
+              </md-filled-card>
+
+              <md-filled-card class="summary-card" onclick={() => (this.selectedStatus = 'fulfilled')}>
+                <div class="summary-content">
+                  <span class="summary-label">Vybavené</span>
+                  <md-badge label={stats.fulfilled}>
+                    <span class="summary-value">{stats.fulfilled}</span>
+                  </md-badge>
+                </div>
+              </md-filled-card>
+
+              <md-filled-card class="summary-card" onclick={() => (this.selectedStatus = 'archived')}>
+                <div class="summary-content">
+                  <span class="summary-label">Archivované</span>
+                  <md-badge label={stats.archived}>
+                    <span class="summary-value">{stats.archived}</span>
+                  </md-badge>
+                </div>
+              </md-filled-card>
             </section>
 
             <div class="filters">
               <md-chip-set class="status-chips" aria-label="Filter podľa stavu">
-                {this.renderStatusChip('created', 'Vytvorená', stats.created)}
+                {this.renderStatusChip('created', 'Pripravené na spracovanie', stats.created)}
                 {this.renderStatusChip('processing', 'Spracováva sa', stats.processing)}
-                {this.renderStatusChip('fulfilled', 'Vybavená', stats.fulfilled)}
-                {this.renderStatusChip('canceled', 'Zrušená', stats.canceled)}
-                {this.renderStatusChip('archived', 'Archivovaná', stats.archived)}
+                {this.renderStatusChip('fulfilled', 'Dokončené', stats.fulfilled)}
+                {this.renderStatusChip('canceled', 'Zrušené', stats.canceled)}
+                {this.renderStatusChip('archived', 'Archivované', stats.archived)}
                 {this.renderStatusChip('all', 'Všetky', stats.all)}
                 <md-filter-chip
                   label="Len otvorené"
@@ -381,9 +418,36 @@ export class XpartlaPharmacyOrderList {
                     <p class="id">ID: {order.id}</p>
                     <p class="note">{order.note || 'Bez poznámky.'}</p>
                     <div class="meta-row">
-                      <p class="meta">Položiek: {order.items?.length || 0}</p>
+                      <p class="meta">
+                        Položiek:
+                        <md-badge label={order.items?.length || 0}>
+                          <span>{order.items?.length || 0}</span>
+                        </md-badge>
+                      </p>
                       <p class="meta">Aktualizácia: {this.formatDate(order.updatedAt || order.createdAt)}</p>
                     </div>
+
+                    {/* Expansion Panel - Extra element */}
+                    <md-expansion-panel>
+                      <div slot="headline">Podrobnosti položiek</div>
+                      <div slot="supporting-text" style={{ fontSize: '0.875rem', color: 'var(--md-sys-color-on-surface-variant)' }}>
+                        {order.items && order.items.length > 0 ? (
+                          <div class="expansion-items">
+                            {order.items.map((item, idx) => (
+                              <div key={idx} class="expansion-item">
+                                <strong>{item.productName || '—'}</strong>
+                                <div style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                                  Požadované: {item.requestedQty ?? 0} | Vydané: {item.issuedQty ?? 0}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p style={{ margin: '0' }}>Bez položiek</p>
+                        )}
+                      </div>
+                    </md-expansion-panel>
+
                     {this.renderCardActions(order)}
                   </md-elevated-card>
                 ))}

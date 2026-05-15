@@ -358,10 +358,10 @@ export class XpartlaPharmacyProductEditor {
       const response = this.isNew
         ? await api.createProductRaw({ pharmacyId: this.pharmacyId, product: this.entry })
         : await api.updateProductRaw({
-            pharmacyId: this.pharmacyId,
-            productId: this.productId,
-            product: this.entry,
-          });
+          pharmacyId: this.pharmacyId,
+          productId: this.productId,
+          product: this.entry,
+        });
       if (response.raw.status < 299) {
         this.editorClosed.emit('store');
       } else {
