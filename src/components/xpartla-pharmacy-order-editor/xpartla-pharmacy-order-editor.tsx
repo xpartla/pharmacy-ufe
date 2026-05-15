@@ -165,6 +165,42 @@ export class XpartlaPharmacyOrderEditor {
         }
     }
 
+    private canCancelOrArchiveViaDelete(): boolean {
+        if (this.isNew || !this.entry) return false;
+        if (this.userRole === 'lekaren') return false;
+        return this.entry.status === 'created';
+    }
+
+    private cancelOrArchiveLabel(): string {
+        return this.userRole === 'lekaren' ? 'Archivovať objednávku' : 'Zrušiť objednávku';
+    }
+
+    private async setStatus(nextStatus: DepartmentOrderStatus) {
+        if (this.isNew) return;
+        this.saving = true;
+        this.errorMessage = undefined;
+        try {
+            const updated = await updateDepartmentOrder(this.apiBase, this.pharmacyId, this.orderId, {
+                ...this.entry,
+                status: nextStatus,
+            });
+            this.entry = updated;
+        } catch (err: any) {
+            this.errorMessage = `Stav objednávky sa nepodarilo zmeniť: ${err.message || 'neznáma chyba'}`;
+        } finally {
+            this.saving = false;
+        }
+    }
+
+    private async closeOrder() {
+        if (this.isNew) return;
+        if (this.entry.status !== 'fulfilled') {
+            this.errorMessage = 'Objednávku je možné zatvoriť až po vybavení.';
+            return;
+        }
+        await this.setStatus('archived');
+    }
+
     render() {
         if (this.loading) {
             return (
@@ -314,10 +350,28 @@ export class XpartlaPharmacyOrderEditor {
                 </section>
 
                 <div class="actions">
-                    {!this.isNew && (
+                    {!this.isNew && this.userRole === 'lekaren' && this.entry.status === 'created' && (
+                        <md-filled-tonal-button disabled={this.saving} onclick={() => this.setStatus('processing')}>
+                            <md-icon slot="icon">play_arrow</md-icon>
+                            Prevziať do spracovania
+                        </md-filled-tonal-button>
+                    )}
+                    {!this.isNew && this.userRole === 'lekaren' && this.entry.status === 'processing' && (
+                        <md-filled-tonal-button disabled={this.saving} onclick={() => this.setStatus('fulfilled')}>
+                            <md-icon slot="icon">inventory_2</md-icon>
+                            Označiť ako vybavenú
+                        </md-filled-tonal-button>
+                    )}
+                    {!this.isNew && this.canCancelOrArchiveViaDelete() && (
                         <md-filled-tonal-button class="danger" disabled={this.saving} onclick={() => this.remove()}>
                             <md-icon slot="icon">delete</md-icon>
-                            Zrušiť / Archivovať
+                            {this.cancelOrArchiveLabel()}
+                        </md-filled-tonal-button>
+                    )}
+                    {!this.isNew && this.userRole === 'lekaren' && this.entry.status === 'fulfilled' && (
+                        <md-filled-tonal-button disabled={this.saving} onclick={() => this.closeOrder()}>
+                            <md-icon slot="icon">task_alt</md-icon>
+                            Zatvoriť objednávku
                         </md-filled-tonal-button>
                     )}
                     <span class="stretch"></span>

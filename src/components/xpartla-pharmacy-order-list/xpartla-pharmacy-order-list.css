@@ -85,6 +85,16 @@ h3 {
     gap: 8px;
 }
 
+.filters {
+    display: grid;
+    gap: 8px;
+    margin: 12px 0 16px;
+}
+
+.search {
+    width: min(460px, 100%);
+}
+
 .role-badge {
     font-size: 0.85rem;
     color: var(--md-sys-color-on-surface-variant);

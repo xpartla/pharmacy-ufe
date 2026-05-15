@@ -22,6 +22,7 @@ export class XpartlaPharmacyOrderList {
   @State() errorMessage: string;
   @State() orders: DepartmentOrder[] = [];
   @State() selectedStatus: StatusFilter = 'all';
+  @State() searchText: string = '';
 
   async componentWillLoad() {
     await this.load();
@@ -54,14 +55,18 @@ export class XpartlaPharmacyOrderList {
   }
 
   private filtered(): DepartmentOrder[] {
+    const query = this.searchText.trim().toLowerCase();
     return this.orders.filter(order => {
-      // Role-based filtering: nurse (sestra) can only see created orders
-      if (this.userRole === 'sestra' && order.status !== 'created') {
-        return false;
-      }
-      // Status filtering: if 'all' is selected, show all (respecting role filter above)
+      // Status filtering
       if (this.selectedStatus !== 'all' && order.status !== this.selectedStatus) {
         return false;
+      }
+      // Free text search for department, id and note
+      if (query) {
+        const haystack = `${order.departmentName || ''} ${order.id || ''} ${order.note || ''}`.toLowerCase();
+        if (!haystack.includes(query)) {
+          return false;
+        }
       }
       return true;
     });
@@ -137,14 +142,22 @@ export class XpartlaPharmacyOrderList {
 
         {!this.loading && this.orders.length > 0 && (
           <>
-            <md-chip-set class="status-chips" aria-label="Filter podľa stavu">
-              {this.renderStatusChip('created', 'Vytvorená', stats.created)}
-              {this.renderStatusChip('processing', 'Spracováva sa', stats.processing)}
-              {this.renderStatusChip('fulfilled', 'Vybavená', stats.fulfilled)}
-              {this.renderStatusChip('canceled', 'Zrušená', stats.canceled)}
-              {this.renderStatusChip('archived', 'Archivovaná', stats.archived)}
-              {this.renderStatusChip('all', 'Všetky', stats.all)}
-            </md-chip-set>
+            <div class="filters">
+              <md-chip-set class="status-chips" aria-label="Filter podľa stavu">
+                {this.renderStatusChip('created', 'Vytvorená', stats.created)}
+                {this.renderStatusChip('processing', 'Spracováva sa', stats.processing)}
+                {this.renderStatusChip('fulfilled', 'Vybavená', stats.fulfilled)}
+                {this.renderStatusChip('canceled', 'Zrušená', stats.canceled)}
+                {this.renderStatusChip('archived', 'Archivovaná', stats.archived)}
+                {this.renderStatusChip('all', 'Všetky', stats.all)}
+              </md-chip-set>
+              <md-outlined-text-field
+                class="search"
+                label="Hľadať oddelenie / ID / poznámku"
+                value={this.searchText}
+                oninput={(ev: InputEvent) => (this.searchText = (ev.target as HTMLInputElement).value)}
+              ></md-outlined-text-field>
+            </div>
 
             {visible.length === 0 ? (
               <div class="empty">
