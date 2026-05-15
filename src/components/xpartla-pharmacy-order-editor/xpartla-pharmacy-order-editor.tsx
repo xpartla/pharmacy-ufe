@@ -31,6 +31,27 @@ export class XpartlaPharmacyOrderEditor {
         return !this.orderId || this.orderId === '@new';
     }
 
+    private createItemId(): string {
+        return `item-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    }
+
+    private createEmptyItem(): DepartmentOrderItem {
+        return {
+            id: this.createItemId(),
+            productName: '',
+            requestedQty: 1,
+            issuedQty: 0,
+        };
+    }
+
+    private normalizeItems(items: DepartmentOrderItem[] | undefined): DepartmentOrderItem[] {
+        const source = items && items.length > 0 ? items : [this.createEmptyItem()];
+        return source.map(item => ({
+            ...item,
+            id: item.id || this.createItemId(),
+        }));
+    }
+
     async componentWillLoad() {
         await this.loadOrder();
         this.loading = false;
@@ -43,16 +64,14 @@ export class XpartlaPharmacyOrderEditor {
                 departmentName: '',
                 note: '',
                 status: 'created',
-                items: [{ productName: '', requestedQty: 1, issuedQty: 0 }],
+                items: [this.createEmptyItem()],
             };
             return;
         }
 
         try {
             this.entry = await fetchDepartmentOrder(this.apiBase, this.pharmacyId, this.orderId);
-            if (!this.entry.items || this.entry.items.length === 0) {
-                this.entry = { ...this.entry, items: [{ productName: '', requestedQty: 1, issuedQty: 0 }] };
-            }
+            this.entry = { ...this.entry, items: this.normalizeItems(this.entry.items) };
         } catch (err: any) {
             this.errorMessage = `Nepodarilo sa načítať objednávku: ${err.message || 'neznáma chyba'}`;
         }
@@ -81,10 +100,11 @@ export class XpartlaPharmacyOrderEditor {
 
     private upsertItem(index: number, item: Partial<DepartmentOrderItem>) {
         const items = [...(this.entry?.items || [])];
-        const previous = items[index] || { productName: '', requestedQty: 1, issuedQty: 0 };
+        const previous = items[index] || this.createEmptyItem();
         items[index] = {
             ...previous,
             ...item,
+            id: previous.id || this.createItemId(),
             requestedQty: Math.max(1, Number(item.requestedQty ?? previous.requestedQty ?? 1)),
             issuedQty: Math.max(0, Number(item.issuedQty ?? previous.issuedQty ?? 0)),
         };
@@ -96,14 +116,14 @@ export class XpartlaPharmacyOrderEditor {
         items.splice(index, 1);
         this.entry = {
             ...this.entry,
-            items: items.length > 0 ? items : [{ productName: '', requestedQty: 1, issuedQty: 0 }],
+            items: items.length > 0 ? items : [this.createEmptyItem()],
         };
     }
 
     private addItem() {
         this.entry = {
             ...this.entry,
-            items: [...(this.entry?.items || []), { productName: '', requestedQty: 1, issuedQty: 0 }],
+            items: [...(this.entry?.items || []), this.createEmptyItem()],
         };
     }
 
